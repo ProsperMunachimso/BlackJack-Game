@@ -335,6 +335,22 @@ class GameWindow(QMainWindow):
         QWidget.setTabOrder(self.hit_button, self.stand_button)
         QWidget.setTabOrder(self.stand_button, self.new_round_button)
 
+        def create_theme_switcher(self):
+            """Create theme toggle button"""
+            self.theme_button = QPushButton("🌙 Dark Mode")
+            self.theme_button.setCheckable(True)
+            self.theme_button.clicked.connect(self.toggle_theme)
+            return self.theme_button
+
+        def toggle_theme(self, checked):
+            """Toggle between light and dark themes"""
+            if checked:
+                self.set_dark_theme()
+                self.theme_button.setText("☀️ Light Mode")
+            else:
+                self.set_light_theme()
+                self.theme_button.setText("🌙 Dark Mode")
+
     def create_scoreboard(self):
         """Create the scoreboard widget"""
         scoreboard = QGroupBox("Scoreboard")
