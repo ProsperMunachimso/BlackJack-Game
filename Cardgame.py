@@ -326,6 +326,14 @@ class GameWindow(QMainWindow):
         controls = self.create_controls()
         main_layout.addWidget(controls)
 
+        # Theme switcher section
+        theme_layout = QHBoxLayout()
+        theme_layout.addStretch()
+        self.theme_button = self.create_theme_switcher()
+        theme_layout.addWidget(self.theme_button)
+        theme_layout.addStretch()
+        main_layout.addLayout(theme_layout)
+
         # Status bar
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
@@ -334,22 +342,139 @@ class GameWindow(QMainWindow):
         # Accessibility: Set tab order
         QWidget.setTabOrder(self.hit_button, self.stand_button)
         QWidget.setTabOrder(self.stand_button, self.new_round_button)
+        QWidget.setTabOrder(self.new_round_button, self.theme_button)
 
-        def create_theme_switcher(self):
-            """Create theme toggle button"""
-            self.theme_button = QPushButton("🌙 Dark Mode")
-            self.theme_button.setCheckable(True)
-            self.theme_button.clicked.connect(self.toggle_theme)
-            return self.theme_button
+    def create_theme_switcher(self):
+        """Create theme toggle button"""
+        theme_button = QPushButton("🌙 Dark Mode")
+        theme_button.setCheckable(True)
+        theme_button.setToolTip("Toggle between light and dark theme")
+        theme_button.setAccessibleName("Theme toggle button. Switch between light and dark mode.")
+        theme_button.clicked.connect(self.toggle_theme)
+        theme_button.setFixedSize(140, 40)
+        theme_button.setStyleSheet("""
+            QPushButton {
+                background-color: #34495E;
+                color: white;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 12px;
+            }
+            QPushButton:hover {
+                background-color: #2C3E50;
+            }
+            QPushButton:checked {
+                background-color: #F39C12;
+            }
+        """)
+        return theme_button
 
-        def toggle_theme(self, checked):
-            """Toggle between light and dark themes"""
-            if checked:
-                self.set_dark_theme()
-                self.theme_button.setText("☀️ Light Mode")
-            else:
-                self.set_light_theme()
-                self.theme_button.setText("🌙 Dark Mode")
+    def toggle_theme(self, checked):
+        """Toggle between light and dark themes"""
+        if checked:
+            self.set_dark_theme()
+            self.theme_button.setText("☀️ Light Mode")
+            self.status_bar.showMessage("Dark theme activated")
+        else:
+            self.set_light_theme()
+            self.theme_button.setText("🌙 Dark Mode")
+            self.status_bar.showMessage("Light theme activated")
+
+    def set_light_theme(self):
+        """Apply light theme colors"""
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #F8F9FA;
+            }
+            QLabel {
+                color: #212529;
+            }
+            QGroupBox {
+                background-color: white;
+                border: 2px solid #DEE2E6;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+                color: #495057;
+            }
+            QStatusBar {
+                background-color: #E9ECEF;
+                color: #495057;
+            }
+        """)
+
+        # Update scoreboard colors for light theme
+        self.player_score_label.setStyleSheet("color: #27AE60; font-size: 16px;")
+        self.dealer_score_label.setStyleSheet("color: #E74C3C; font-size: 16px;")
+        self.rounds_label.setStyleSheet("color: #7F8C8D; font-size: 14px;")
+
+        # Update result label colors for light theme
+        if self.game.result == "win":
+            self.result_label.setStyleSheet("color: #27AE60; padding: 10px;")
+        elif self.game.result == "lose":
+            self.result_label.setStyleSheet("color: #E74C3C; padding: 10px;")
+        elif self.game.result == "push":
+            self.result_label.setStyleSheet("color: #7F8C8D; padding: 10px;")
+        elif self.game.game_state == "player_turn":
+            self.result_label.setStyleSheet("color: #3498DB; padding: 10px;")
+        elif self.game.game_state == "dealer_turn":
+            self.result_label.setStyleSheet("color: #E67E22; padding: 10px;")
+        else:
+            self.result_label.setStyleSheet("color: #2C3E50; padding: 10px;")
+
+    def set_dark_theme(self):
+        """Apply dark theme colors"""
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #121212;
+            }
+            QLabel {
+                color: #E0E0E0;
+            }
+            QGroupBox {
+                background-color: #1E1E1E;
+                border: 2px solid #424242;
+                border-radius: 5px;
+                margin-top: 10px;
+                font-weight: bold;
+                color: #E0E0E0;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px 0 5px;
+                color: #BB86FC;
+            }
+            QStatusBar {
+                background-color: #1E1E1E;
+                color: #E0E0E0;
+                border-top: 1px solid #424242;
+            }
+        """)
+
+        # Update scoreboard colors for dark theme
+        self.player_score_label.setStyleSheet("color: #4CAF50; font-size: 16px;")
+        self.dealer_score_label.setStyleSheet("color: #F44336; font-size: 16px;")
+        self.rounds_label.setStyleSheet("color: #9E9E9E; font-size: 14px;")
+
+        # Update result label colors for dark theme
+        if self.game.result == "win":
+            self.result_label.setStyleSheet("color: #4CAF50; padding: 10px;")
+        elif self.game.result == "lose":
+            self.result_label.setStyleSheet("color: #F44336; padding: 10px;")
+        elif self.game.result == "push":
+            self.result_label.setStyleSheet("color: #9E9E9E; padding: 10px;")
+        elif self.game.game_state == "player_turn":
+            self.result_label.setStyleSheet("color: #64B5F6; padding: 10px;")
+        elif self.game.game_state == "dealer_turn":
+            self.result_label.setStyleSheet("color: #FFB74D; padding: 10px;")
+        else:
+            self.result_label.setStyleSheet("color: #E0E0E0; padding: 10px;")
 
     def create_scoreboard(self):
         """Create the scoreboard widget"""
@@ -582,14 +707,12 @@ class GameWindow(QMainWindow):
             self.stand_button.setEnabled(True)
             self.new_round_button.setEnabled(False)
             self.result_label.setText("Your turn - Hit or Stand?")
-            self.result_label.setStyleSheet("color: #3498DB; padding: 10px;")
             self.status_bar.showMessage("Your turn. Click Hit to draw a card or Stand to end your turn.")
         elif self.game.game_state == "dealer_turn":
             self.hit_button.setEnabled(False)
             self.stand_button.setEnabled(False)
             self.new_round_button.setEnabled(False)
             self.result_label.setText("Dealer's turn...")
-            self.result_label.setStyleSheet("color: #E67E22; padding: 10px;")
             self.status_bar.showMessage("Dealer's turn. The dealer will draw cards until reaching 17 or more.")
         elif self.game.game_state == "finished":
             self.hit_button.setEnabled(False)
@@ -599,22 +722,48 @@ class GameWindow(QMainWindow):
             # Display result
             if self.game.result == "win":
                 self.result_label.setText("You Win! 🎉")
-                self.result_label.setStyleSheet("color: #27AE60; padding: 10px;")
                 self.status_bar.showMessage("Congratulations! You won this round.")
             elif self.game.result == "lose":
                 self.result_label.setText("Dealer Wins 💔")
-                self.result_label.setStyleSheet("color: #E74C3C; padding: 10px;")
                 self.status_bar.showMessage("Dealer won this round. Better luck next time!")
             else:  # push
                 self.result_label.setText("Push (Tie) 🤝")
-                self.result_label.setStyleSheet("color: #7F8C8D; padding: 10px;")
                 self.status_bar.showMessage("It's a tie! The round ends in a push.")
         else:  # idle
             self.hit_button.setEnabled(False)
             self.stand_button.setEnabled(False)
             self.new_round_button.setEnabled(True)
             self.result_label.setText("Click 'New Round' to start!")
-            self.result_label.setStyleSheet("color: #2C3E50; padding: 10px;")
+
+        # Apply current theme colors to result label
+        if hasattr(self, 'theme_button') and self.theme_button.isChecked():
+            # Dark theme is active
+            if self.game.result == "win":
+                self.result_label.setStyleSheet("color: #4CAF50; padding: 10px;")
+            elif self.game.result == "lose":
+                self.result_label.setStyleSheet("color: #F44336; padding: 10px;")
+            elif self.game.result == "push":
+                self.result_label.setStyleSheet("color: #9E9E9E; padding: 10px;")
+            elif self.game.game_state == "player_turn":
+                self.result_label.setStyleSheet("color: #64B5F6; padding: 10px;")
+            elif self.game.game_state == "dealer_turn":
+                self.result_label.setStyleSheet("color: #FFB74D; padding: 10px;")
+            else:
+                self.result_label.setStyleSheet("color: #E0E0E0; padding: 10px;")
+        else:
+            # Light theme is active
+            if self.game.result == "win":
+                self.result_label.setStyleSheet("color: #27AE60; padding: 10px;")
+            elif self.game.result == "lose":
+                self.result_label.setStyleSheet("color: #E74C3C; padding: 10px;")
+            elif self.game.result == "push":
+                self.result_label.setStyleSheet("color: #7F8C8D; padding: 10px;")
+            elif self.game.game_state == "player_turn":
+                self.result_label.setStyleSheet("color: #3498DB; padding: 10px;")
+            elif self.game.game_state == "dealer_turn":
+                self.result_label.setStyleSheet("color: #E67E22; padding: 10px;")
+            else:
+                self.result_label.setStyleSheet("color: #2C3E50; padding: 10px;")
 
         # Force UI update
         self.update()
