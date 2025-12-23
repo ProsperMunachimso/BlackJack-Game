@@ -146,6 +146,15 @@ class Game21:
         self.result = None  # win, lose, push
         self.dealer_hidden_revealed = False
 
+    def reset_game(self):
+        """
+        Reset the entire game - all scores and rounds to zero
+        """
+        self.player_wins = 0
+        self.dealer_wins = 0
+        self.rounds_played = 0
+        self.new_round()
+
     def deal_initial_cards(self):
         """
         Deal two cards each to player and dealer.

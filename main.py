@@ -65,9 +65,11 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.welcome_page)
 
     def show_game_page(self):
-        """Switch to game page"""
+        """Switch to game page and reset game"""
+        # Reset the game to ensure fresh start
+        self.game_page.game.reset_game()
         self.stacked_widget.setCurrentWidget(self.game_page)
-        self.status_bar.showMessage("Game started! Click 'New Round' to begin playing.")
+        self.status_bar.showMessage("New game started! Click 'New Round' to begin playing.")
         self.game_page.new_round_setup()
 
     def show_welcome_page(self):

@@ -266,6 +266,44 @@ GamePage[theme="dark"] QPushButton#hitButton {
 GamePage[theme="dark"] QPushButton#hitButton:hover {
     background-color: #1976D2;
 }
+/* New Game button styles for light theme */
+GamePage[theme="light"] QPushButton#newGameButton,
+GamePage[theme="light"] QPushButton#newGameButtonSmall {
+    background-color: #9B59B6;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+GamePage[theme="light"] QPushButton#newGameButton:hover,
+GamePage[theme="light"] QPushButton#newGameButtonSmall:hover {
+    background-color: #8E44AD;
+}
+
+/* New Game button styles for dark theme */
+GamePage[theme="dark"] QPushButton#newGameButton,
+GamePage[theme="dark"] QPushButton#newGameButtonSmall {
+    background-color: #7B1FA2;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+GamePage[theme="dark"] QPushButton#newGameButton:hover,
+GamePage[theme="dark"] QPushButton#newGameButtonSmall:hover {
+    background-color: #6A1B9A;
+}
+
+/* Differentiate between the two New Game buttons if needed */
+GamePage[theme="light"] QPushButton#newGameButtonSmall {
+    font-size: 14px; /* Slightly larger in controls section */
+}
+
+GamePage[theme="dark"] QPushButton#newGameButtonSmall {
+    font-size: 14px; /* Slightly larger in controls section */
+}
 
 GamePage[theme="dark"] QPushButton#hitButton:disabled {
     background-color: #757575;

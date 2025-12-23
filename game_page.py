@@ -116,14 +116,14 @@ class GamePage(QWidget):
         self.theme_button = self.create_theme_switcher()
         theme_layout.addWidget(self.theme_button)
 
-        # Back to welcome button
-        self.back_button = QPushButton(" Back to Welcome")
+        # Back to welcome button (NO NEW GAME BUTTON BETWEEN THEME AND BACK)
+        self.back_button = QPushButton("🏠 Back to Home")
         self.back_button.setObjectName("backButton")
         self.back_button.setFont(QFont("Arial", 12))
         self.back_button.setFixedSize(150, 40)
+        self.back_button.setToolTip("Return to welcome page (current progress will be lost)")
         self.back_button.clicked.connect(self.go_to_welcome)
         theme_layout.addWidget(self.back_button)
-
         theme_layout.addStretch()
         main_layout.addLayout(theme_layout)
 
@@ -132,7 +132,7 @@ class GamePage(QWidget):
 
     def create_theme_switcher(self):
         """Create theme toggle button"""
-        theme_button = QPushButton(" Dark Mode")
+        theme_button = QPushButton("🌙 Dark Mode")
         theme_button.setObjectName("themeButton")
         theme_button.setCheckable(True)
         theme_button.setToolTip("Toggle between light and dark theme")
@@ -145,12 +145,12 @@ class GamePage(QWidget):
         """Toggle between light and dark themes"""
         if checked:
             self.set_theme("dark")
-            self.theme_button.setText(" Light Mode")
+            self.theme_button.setText("☀️ Light Mode")
             if hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage("Dark theme activated")
         else:
             self.set_theme("light")
-            self.theme_button.setText(" Dark Mode")
+            self.theme_button.setText("🌙 Dark Mode")
             if hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage("Light theme activated")
 
@@ -293,13 +293,34 @@ class GamePage(QWidget):
         self.new_round_button.clicked.connect(self.on_new_round)
         layout.addWidget(self.new_round_button)
 
+        # New Game button (KEEP THIS ONE in controls section)
+        self.new_game_button = QPushButton("🔄 New Game")
+        self.new_game_button.setObjectName("newGameButton")
+        self.new_game_button.setFont(QFont("Arial", 14))
+        self.new_game_button.setFixedSize(120, 50)
+        self.new_game_button.setToolTip("Reset all scores and start fresh")
+        self.new_game_button.clicked.connect(self.on_new_game)
+        layout.addWidget(self.new_game_button)
+
         layout.addStretch()
         return controls
 
     def go_to_welcome(self):
-        """Return to welcome page"""
-        if self.parent:
-            self.parent.show_welcome_page()
+        """Return to welcome page with confirmation"""
+        # Show confirmation dialog
+        reply = QMessageBox.question(
+            self,
+            "Return to Home",
+            "Are you sure you want to return to home?\nYour current game progress will be lost.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            # Reset the game before going back
+            self.game.reset_game()
+            if self.parent:
+                self.parent.show_welcome_page()
 
     # BUTTON ACTIONS
 
@@ -343,6 +364,31 @@ class GamePage(QWidget):
         """Start a new round"""
         self.game.new_round()
         self.new_round_setup()
+
+    def on_new_game(self):
+        """Reset entire game - all scores and rounds to zero"""
+        # Show confirmation dialog
+        reply = QMessageBox.question(
+            self,
+            "New Game Confirmation",
+            "Are you sure you want to start a new game?\nThis will reset all scores to zero.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            # Reset the game
+            self.game.reset_game()
+
+            # Update UI
+            self.new_round_setup()
+
+            # Update status bar
+            if self.parent and hasattr(self.parent, 'status_bar'):
+                self.parent.status_bar.showMessage("New game started! All scores have been reset.")
+
+            # Update result label
+            self.result_label.setText("New game started! Click 'New Round' to begin.")
 
     def process_dealer_turn(self):
         """Process dealer's turn with animation"""
