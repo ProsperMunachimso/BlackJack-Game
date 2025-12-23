@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 import sys
+import os
 
 # Import modules
 from game_logic import Game21
@@ -9,11 +10,27 @@ from welcome_page import WelcomePage
 from game_page import GamePage
 
 
+def load_stylesheet(filename):
+    """Load and return the QSS stylesheet from file"""
+    try:
+        # Check if file exists
+        if not os.path.exists(filename):
+            print(f"Warning: Stylesheet file '{filename}' not found.")
+            return ""
+
+        with open(filename, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"Error loading stylesheet: {e}")
+        return ""
+
+
 class MainWindow(QMainWindow):
     """Main application window with stacked pages"""
 
     def __init__(self):
         super().__init__()
+        self.stylesheet = load_stylesheet("style.qss")
         self.init_ui()
 
     def init_ui(self):
@@ -38,16 +55,14 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage("Welcome to 21 Card Game! Click 'Start Game' to begin.")
 
-        # Apply light theme by default
-        self.apply_initial_theme()
+        # Apply stylesheet
+        self.setStyleSheet(self.stylesheet)
+
+        # Apply light theme by default to game page
+        self.game_page.set_theme("light")
 
         # Show welcome page initially
         self.stacked_widget.setCurrentWidget(self.welcome_page)
-
-    def apply_initial_theme(self):
-        """Apply initial theme to both pages"""
-        # Welcome page has its own styling, so we only need to apply to game page
-        self.game_page.set_light_theme()
 
     def show_game_page(self):
         """Switch to game page"""
@@ -70,24 +85,13 @@ def main():
     """Main application entry point"""
     app = QApplication(sys.argv)
 
-    # Set application style and palette for better contrast
+    # Set application style for better contrast
     app.setStyle("Fusion")
 
-    # Create and customize palette for accessibility
-    palette = QPalette()
-    palette.setColor(QPalette.ColorRole.Window, QColor(240, 240, 240))
-    palette.setColor(QPalette.ColorRole.WindowText, QColor(33, 37, 41))
-    palette.setColor(QPalette.ColorRole.Base, QColor(255, 255, 255))
-    palette.setColor(QPalette.ColorRole.AlternateBase, QColor(248, 249, 250))
-    palette.setColor(QPalette.ColorRole.ToolTipBase, QColor(33, 37, 41))
-    palette.setColor(QPalette.ColorRole.ToolTipText, QColor(248, 249, 250))
-    palette.setColor(QPalette.ColorRole.Text, QColor(33, 37, 41))
-    palette.setColor(QPalette.ColorRole.Button, QColor(52, 152, 219))
-    palette.setColor(QPalette.ColorRole.ButtonText, QColor(255, 255, 255))
-    palette.setColor(QPalette.ColorRole.BrightText, QColor(255, 255, 255))
-    palette.setColor(QPalette.ColorRole.Highlight, QColor(41, 128, 185))
-    palette.setColor(QPalette.ColorRole.HighlightedText, QColor(255, 255, 255))
-    app.setPalette(palette)
+    # Load global stylesheet
+    global_stylesheet = load_stylesheet("style.qss")
+    if global_stylesheet:
+        app.setStyleSheet(global_stylesheet)
 
     # Set application font for better readability
     font = QFont("Arial", 10)

@@ -13,6 +13,12 @@ class CardWidget(QWidget):
         self.is_hidden = is_hidden
         self.setFixedSize(80, 120)
 
+        # Define consistent fonts for all card elements
+        self.rank_font = QFont("Arial", 24, QFont.Weight.Bold)
+        self.suit_font = QFont("Arial", 32, QFont.Weight.Bold)
+        self.hidden_font = QFont("Arial", 24, QFont.Weight.Bold)
+        self.setObjectName("cardWidget")
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -27,7 +33,7 @@ class CardWidget(QWidget):
             painter.setBrush(QBrush(QColor(41, 128, 185)))
             painter.drawRoundedRect(5, 5, self.width() - 10, self.height() - 10, 8, 8)
             painter.setPen(QPen(QColor(255, 255, 255), 2))
-            painter.setFont(QFont("Arial", 24, QFont.Weight.Bold))
+            painter.setFont(self.hidden_font)
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "?")
         elif self.card:
             # Determine card color
@@ -39,22 +45,25 @@ class CardWidget(QWidget):
 
             painter.setPen(QPen(color, 2))
 
-            # Draw rank and suit in top-left
-            painter.setFont(QFont("Arial", 14, QFont.Weight.Bold))
+            # Get card text and suit symbol
             text = self.card.get_display_text()
+            suit_symbols = {'H': '♥', 'D': '♦', 'C': '♣', 'S': '♠'}
+            suit_symbol = suit_symbols[suit]
+
+            # Draw rank and suit in top-left
+            painter.setFont(self.rank_font)
             painter.drawText(10, 25, text)
 
             # Draw large suit symbol in center
-            painter.setFont(QFont("Arial", 32, QFont.Weight.Bold))
-            suit_symbols = {'H': '♥', 'D': '♦', 'C': '♣', 'S': '♠'}
-            suit_symbol = suit_symbols[suit]
+            painter.setFont(self.suit_font)
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, suit_symbol)
 
-            # Draw rank and suit in bottom-right (rotated)
+            # Draw rank and suit in bottom-right (rotated) - USING EXACT SAME FONT
             painter.save()
             painter.translate(self.width(), self.height())
             painter.rotate(180)
-            painter.drawText(10, 25, text)
+            painter.setFont(self.rank_font)  # EXACT SAME FONT as top-left
+            painter.drawText(10, 25, text)  # EXACT SAME POSITION as top-left
             painter.restore()
 
 
@@ -65,6 +74,8 @@ class GamePage(QWidget):
         super().__init__(parent)
         self.parent = parent
         self.game = Game21()
+        self.current_theme = "light"
+        self.current_state = "idle"
         self.init_ui()
 
     def init_ui(self):
@@ -72,12 +83,19 @@ class GamePage(QWidget):
         main_layout = QVBoxLayout(self)
         main_layout.setSpacing(20)
 
+        # Set object name for QSS styling
+        self.setObjectName("gamePage")
+
+        # Set properties for QSS
+        self.setProperty("theme", "light")
+        self.setProperty("state", "idle")
+        self.setProperty("result", "none")
+
         # Title
         title_label = QLabel("21 Card Game")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title_font = QFont("Arial", 24, QFont.Weight.Bold)
         title_label.setFont(title_font)
-        title_label.setStyleSheet("color: #2C3E50; margin: 10px;")
         main_layout.addWidget(title_label)
 
         # Scoreboard
@@ -99,177 +117,103 @@ class GamePage(QWidget):
         theme_layout.addWidget(self.theme_button)
 
         # Back to welcome button
-        self.back_button = QPushButton("🏠 Back to Welcome")
+        self.back_button = QPushButton(" Back to Welcome")
+        self.back_button.setObjectName("backButton")
         self.back_button.setFont(QFont("Arial", 12))
         self.back_button.setFixedSize(150, 40)
-        self.back_button.setStyleSheet("""
-            QPushButton {
-                background-color: #95A5A6;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-                font-size: 12px;
-            }
-            QPushButton:hover {
-                background-color: #7F8C8D;
-            }
-        """)
         self.back_button.clicked.connect(self.go_to_welcome)
         theme_layout.addWidget(self.back_button)
 
         theme_layout.addStretch()
         main_layout.addLayout(theme_layout)
 
+        # Apply initial theme
+        self.set_theme("light")
+
     def create_theme_switcher(self):
         """Create theme toggle button"""
         theme_button = QPushButton(" Dark Mode")
+        theme_button.setObjectName("themeButton")
         theme_button.setCheckable(True)
         theme_button.setToolTip("Toggle between light and dark theme")
         theme_button.setAccessibleName("Theme toggle button. Switch between light and dark mode.")
         theme_button.clicked.connect(self.toggle_theme)
         theme_button.setFixedSize(140, 40)
-        theme_button.setStyleSheet("""
-            QPushButton {
-                background-color: #34495E;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-                font-size: 12px;
-            }
-            QPushButton:hover {
-                background-color: #2C3E50;
-            }
-            QPushButton:checked {
-                background-color: #F39C12;
-            }
-        """)
         return theme_button
 
     def toggle_theme(self, checked):
         """Toggle between light and dark themes"""
         if checked:
-            self.set_dark_theme()
+            self.set_theme("dark")
             self.theme_button.setText(" Light Mode")
             if hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage("Dark theme activated")
         else:
-            self.set_light_theme()
+            self.set_theme("light")
             self.theme_button.setText(" Dark Mode")
             if hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage("Light theme activated")
 
-    def set_light_theme(self):
-        """Apply light theme colors"""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #F8F9FA;
-            }
-            QLabel {
-                color: #212529;
-            }
-            QGroupBox {
-                background-color: white;
-                border: 2px solid #DEE2E6;
-                border-radius: 5px;
-                margin-top: 10px;
-                font-weight: bold;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px 0 5px;
-                color: #495057;
-            }
-        """)
+    def set_theme(self, theme):
+        """Set the theme for the game page"""
+        self.current_theme = theme
+        self.setProperty("theme", theme)
+        self.style().unpolish(self)
+        self.style().polish(self)
 
-        # Update scoreboard colors for light theme
-        if hasattr(self, 'player_score_label'):
-            self.player_score_label.setStyleSheet("color: #27AE60; font-size: 16px;")
-            self.dealer_score_label.setStyleSheet("color: #E74C3C; font-size: 16px;")
-            self.rounds_label.setStyleSheet("color: #7F8C8D; font-size: 14px;")
+        # Update child widgets
+        for child in self.findChildren(QWidget):
+            child.style().unpolish(child)
+            child.style().polish(child)
 
-    def set_dark_theme(self):
-        """Apply dark theme colors"""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #121212;
-            }
-            QLabel {
-                color: #E0E0E0;
-            }
-            QGroupBox {
-                background-color: #1E1E1E;
-                border: 2px solid #424242;
-                border-radius: 5px;
-                margin-top: 10px;
-                font-weight: bold;
-                color: #E0E0E0;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px 0 5px;
-                color: #BB86FC;
-            }
-        """)
+    def set_game_state(self, state, result="none"):
+        """Set the game state for QSS styling"""
+        self.current_state = state
+        self.setProperty("state", state)
+        self.setProperty("result", result)
+        self.style().unpolish(self)
+        self.style().polish(self)
 
-        # Update scoreboard colors for dark theme
-        if hasattr(self, 'player_score_label'):
-            self.player_score_label.setStyleSheet("color: #4CAF50; font-size: 16px;")
-            self.dealer_score_label.setStyleSheet("color: #F44336; font-size: 16px;")
-            self.rounds_label.setStyleSheet("color: #9E9E9E; font-size: 14px;")
+        # Update result label specifically
+        self.result_label.style().unpolish(self.result_label)
+        self.result_label.style().polish(self.result_label)
 
     def create_scoreboard(self):
         """Create the scoreboard widget"""
         scoreboard = QGroupBox("Scoreboard")
-        scoreboard.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 14px;
-                border: 2px solid #3498DB;
-                border-radius: 5px;
-                margin-top: 10px;
-                padding-top: 10px;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px 0 5px;
-            }
-        """)
+        scoreboard.setObjectName("scoreboardGroup")
 
         layout = QHBoxLayout()
 
         # Player score
         self.player_score_label = QLabel("Player: 0")
+        self.player_score_label.setObjectName("playerScoreLabel")
         self.player_score_label.setFont(QFont("Arial", 16))
-        self.player_score_label.setStyleSheet("color: #27AE60;")
         layout.addWidget(self.player_score_label)
 
         # Separator
         layout.addStretch()
         separator = QLabel("|")
         separator.setFont(QFont("Arial", 16))
-        separator.setStyleSheet("color: #7F8C8D;")
         layout.addWidget(separator)
         layout.addStretch()
 
         # Rounds played
         self.rounds_label = QLabel("Rounds: 0")
+        self.rounds_label.setObjectName("roundsLabel")
         self.rounds_label.setFont(QFont("Arial", 14))
         layout.addWidget(self.rounds_label)
 
         layout.addStretch()
         separator2 = QLabel("|")
         separator2.setFont(QFont("Arial", 16))
-        separator2.setStyleSheet("color: #7F8C8D;")
         layout.addWidget(separator2)
         layout.addStretch()
 
         # Dealer score
         self.dealer_score_label = QLabel("Dealer: 0")
+        self.dealer_score_label.setObjectName("dealerScoreLabel")
         self.dealer_score_label.setFont(QFont("Arial", 16))
-        self.dealer_score_label.setStyleSheet("color: #E74C3C;")
         layout.addWidget(self.dealer_score_label)
 
         scoreboard.setLayout(layout)
@@ -282,15 +226,7 @@ class GamePage(QWidget):
 
         # Dealer area
         dealer_group = QGroupBox("Dealer")
-        dealer_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 14px;
-                border: 2px solid #E74C3C;
-                border-radius: 5px;
-                margin-top: 10px;
-            }
-        """)
+        dealer_group.setObjectName("dealerGroup")
         dealer_layout = QVBoxLayout()
 
         self.dealer_total_label = QLabel("Total: --")
@@ -305,22 +241,14 @@ class GamePage(QWidget):
 
         # Result display
         self.result_label = QLabel("Click 'New Round' to start!")
+        self.result_label.setObjectName("resultLabel")
         self.result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.result_label.setFont(QFont("Arial", 18, QFont.Weight.Bold))
-        self.result_label.setStyleSheet("padding: 10px; color: #3498DB;")
         layout.addWidget(self.result_label)
 
         # Player area
         player_group = QGroupBox("Player")
-        player_group.setStyleSheet("""
-            QGroupBox {
-                font-weight: bold;
-                font-size: 14px;
-                border: 2px solid #27AE60;
-                border-radius: 5px;
-                margin-top: 10px;
-            }
-        """)
+        player_group.setObjectName("playerGroup")
         player_layout = QVBoxLayout()
 
         self.player_total_label = QLabel("Total: --")
@@ -343,61 +271,25 @@ class GamePage(QWidget):
 
         # Hit button
         self.hit_button = QPushButton("Hit")
+        self.hit_button.setObjectName("hitButton")
         self.hit_button.setFont(QFont("Arial", 14))
         self.hit_button.setFixedSize(120, 50)
-        self.hit_button.setStyleSheet("""
-            QPushButton {
-                background-color: #3498DB;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #2980B9;
-            }
-            QPushButton:disabled {
-                background-color: #BDC3C7;
-            }
-        """)
         self.hit_button.clicked.connect(self.on_hit)
         layout.addWidget(self.hit_button)
 
         # Stand button
         self.stand_button = QPushButton("Stand")
+        self.stand_button.setObjectName("standButton")
         self.stand_button.setFont(QFont("Arial", 14))
         self.stand_button.setFixedSize(120, 50)
-        self.stand_button.setStyleSheet("""
-            QPushButton {
-                background-color: #E74C3C;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #C0392B;
-            }
-            QPushButton:disabled {
-                background-color: #BDC3C7;
-            }
-        """)
         self.stand_button.clicked.connect(self.on_stand)
         layout.addWidget(self.stand_button)
 
         # New Round button
         self.new_round_button = QPushButton("New Round")
+        self.new_round_button.setObjectName("newRoundButton")
         self.new_round_button.setFont(QFont("Arial", 14))
         self.new_round_button.setFixedSize(120, 50)
-        self.new_round_button.setStyleSheet("""
-            QPushButton {
-                background-color: #27AE60;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #229954;
-            }
-        """)
         self.new_round_button.clicked.connect(self.on_new_round)
         layout.addWidget(self.new_round_button)
 
@@ -413,6 +305,7 @@ class GamePage(QWidget):
 
     def on_hit(self):
         """Player takes a card"""
+        self.set_game_state("player_turn")
         card = self.game.player_hit()
         if card:
             # Add card widget to player's hand
@@ -428,6 +321,7 @@ class GamePage(QWidget):
 
     def on_stand(self):
         """Player ends turn; dealer reveals their hidden card and plays"""
+        self.set_game_state("dealer_turn")
         self.game.player_stand()
         self.update_dealer_cards(full=True)
 
@@ -477,6 +371,14 @@ class GamePage(QWidget):
         result_text = self.game.decide_winner()
         self.result_label.setText(result_text)
 
+        # Set game state for styling
+        if self.game.result == "win":
+            self.set_game_state("finished", "win")
+        elif self.game.result == "lose":
+            self.set_game_state("finished", "lose")
+        else:
+            self.set_game_state("finished", "push")
+
         # Update statistics
         stats = self.game.get_statistics()
         self.update_statistics(stats)
@@ -497,6 +399,14 @@ class GamePage(QWidget):
         """Handle game finished state"""
         result_text = self.game.decide_winner()
         self.result_label.setText(result_text)
+
+        # Set game state for styling
+        if self.game.result == "win":
+            self.set_game_state("finished", "win")
+        elif self.game.result == "lose":
+            self.set_game_state("finished", "lose")
+        else:
+            self.set_game_state("finished", "push")
 
         # Update statistics
         stats = self.game.get_statistics()
@@ -577,6 +487,12 @@ class GamePage(QWidget):
             self.stand_button.setEnabled(False)
             self.new_round_button.setEnabled(True)
 
+            # Set game state for styling
+            if self.game.result == "win":
+                self.set_game_state("finished", "win")
+            elif self.game.result == "push":
+                self.set_game_state("finished", "push")
+
             if self.parent and hasattr(self.parent, 'status_bar'):
                 if self.game.result == "win":
                     self.parent.status_bar.showMessage("Blackjack! You win!")
@@ -584,6 +500,7 @@ class GamePage(QWidget):
                     self.parent.status_bar.showMessage("Both have blackjack! It's a tie.")
         else:
             self.result_label.setText("Your turn! Hit or Stand?")
+            self.set_game_state("player_turn")
             if self.parent and hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage("Your turn. Click Hit to draw a card or Stand to end your turn.")
             self.hit_button.setEnabled(True)
@@ -602,5 +519,4 @@ class GamePage(QWidget):
 
     def update_ui(self):
         """Update the UI based on game state"""
-        # This method is kept for compatibility but most logic is in new_round_setup
         pass
