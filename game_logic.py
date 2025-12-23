@@ -116,43 +116,48 @@ class Hand:
 
 
 class Game21:
+    """Main game class implementing the 21 Card Game"""
+
     def __init__(self):
         # Start immediately with a fresh round
         self.new_round()
 
-        # Game statistics
-        self.player_wins = 0
-        self.dealer_wins = 0
-        self.rounds_played = 0
+        # Game statistics - commented out for assignment compliance
+        # The assignment requires only single self-contained rounds
+        # These lines are kept for future use if needed
+        # self.player_wins = 0
+        # self.dealer_wins = 0
+        # self.rounds_played = 0
 
     # ROUND MANAGEMENT
 
     def new_round(self):
         """
-        Prepares for a new round
-        Suggested process:
+        Prepares for a new self-contained round
         - Create and shuffle a new deck
-        - Reset card pointer
-        - Empty both hands
-        - Reset whether the dealer's hidden card has been revealed
+        - Reset both hands
+        - Reset game state
         """
         self.deck = Deck()
         self.player_hand = Hand()
         self.dealer_hand = Hand()
         self.dealer_hand.is_dealer = True
 
-        # Game state tracking
+        # Game state tracking - reset for each round
         self.game_state = "idle"  # idle, player_turn, dealer_turn, finished
         self.result = None  # win, lose, push
         self.dealer_hidden_revealed = False
 
     def reset_game(self):
         """
-        Reset the entire game - all scores and rounds to zero
+        Reset the entire game - starts a fresh round
+        (For assignment compliance, this just starts a new round since no persistent scores)
         """
-        self.player_wins = 0
-        self.dealer_wins = 0
-        self.rounds_played = 0
+        # For future use if statistics tracking is implemented
+        # self.player_wins = 0
+        # self.dealer_wins = 0
+        # self.rounds_played = 0
+
         self.new_round()
 
     def deal_initial_cards(self):
@@ -178,31 +183,18 @@ class Game21:
                 self.result = "push"
             else:
                 self.result = "win"
-                self.player_wins += 1
-            self.rounds_played += 1
+                # Commented out for assignment compliance - no persistent statistics
+                # self.player_wins += 1
+            # Commented out for assignment compliance - no persistent statistics
+            # self.rounds_played += 1
         else:
             self.game_state = "player_turn"
             self.result = None
 
     # DECK AND CARD DRAWING
 
-    def create_deck(self):
-        """
-        Create a standard 52-card deck represented as text strings, e.g.:
-        'A♠', '10♥', 'K♦'.
-
-        Ranks: A, 2–10, J, Q, K
-        Suits: spades, hearts, diamonds, clubs (with unicode symbols)
-        """
-        ranks = ["A"] + [str(n) for n in range(2, 11)] + ["J", "Q", "K"]
-        suits = ["♠", "♥", "♦", "♣"]
-        return [f"{rank}{suit}" for rank in ranks for suit in suits]
-
     def draw_card(self):
-        """
-        Return the next card in the shuffled deck.
-        Note: Using our Card class instead of string representation
-        """
+        """Return the next card in the shuffled deck"""
         return self.deck.draw()
 
     # HAND VALUES + ACE HANDLING
@@ -241,8 +233,9 @@ class Game21:
         if self.player_hand.is_bust():
             self.game_state = "finished"
             self.result = "lose"
-            self.dealer_wins += 1
-            self.rounds_played += 1
+            # Commented out for assignment compliance - no persistent statistics
+            # self.dealer_wins += 1
+            # self.rounds_played += 1
             self.dealer_hand.reveal_hidden_card()
 
         return card
@@ -284,7 +277,8 @@ class Game21:
 
         self.game_state = "finished"
         self.determine_winner()
-        self.rounds_played += 1
+        # Commented out for assignment compliance - no persistent statistics
+        # self.rounds_played += 1
 
         return drawn_cards
 
@@ -297,10 +291,12 @@ class Game21:
         self.determine_winner()
 
         if self.result == "win":
-            self.player_wins += 1
+            # Commented out for assignment compliance - no persistent statistics
+            # self.player_wins += 1
             return "Player wins!"
         elif self.result == "lose":
-            self.dealer_wins += 1
+            # Commented out for assignment compliance - no persistent statistics
+            # self.dealer_wins += 1
             return "Dealer wins!"
         elif self.result == "push":
             return "Push (tie)."
@@ -317,12 +313,20 @@ class Game21:
 
         if self.player_hand.is_bust():
             self.result = "lose"
+            # Commented out for assignment compliance - no persistent statistics
+            # self.dealer_wins += 1
         elif self.dealer_hand.is_bust():
             self.result = "win"
+            # Commented out for assignment compliance - no persistent statistics
+            # self.player_wins += 1
         elif player_value > dealer_value:
             self.result = "win"
+            # Commented out for assignment compliance - no persistent statistics
+            # self.player_wins += 1
         elif dealer_value > player_value:
             self.result = "lose"
+            # Commented out for assignment compliance - no persistent statistics
+            # self.dealer_wins += 1
         else:
             self.result = "push"
 
@@ -334,13 +338,14 @@ class Game21:
         self.reveal_dealer_card()
         # Note: play_dealer_turn will be called separately from UI
 
-    def get_statistics(self):
-        """
-        Returns the current game statistics
-        """
-        return {
-            'player_wins': self.player_wins,
-            'dealer_wins': self.dealer_wins,
-            'rounds_played': self.rounds_played,
-            'ties': self.rounds_played - self.player_wins - self.dealer_wins
-        }
+    # Commented out for assignment compliance - no persistent statistics needed
+    # def get_statistics(self):
+    #     """
+    #     Returns the current game statistics
+    #     """
+    #     return {
+    #         'player_wins': self.player_wins,
+    #         'dealer_wins': self.dealer_wins,
+    #         'rounds_played': self.rounds_played,
+    #         'ties': self.rounds_played - self.player_wins - self.dealer_wins
+    #     }

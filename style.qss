@@ -1,425 +1,152 @@
-/* Main Application Styles */
-
-/* ========== GLOBAL STYLES ========== */
-* {
-    font-family: 'Arial', sans-serif;
-}
-
+/* Main window styling */
 QMainWindow {
-    background-color: #F8F9FA;
+    background-color: #f0f0f0;
 }
 
-QStatusBar {
-    background-color: #E9ECEF;
-    color: #495057;
-    border-top: 1px solid #DEE2E6;
+/* Game page styling */
+QWidget#gamePage {
+    background-color: #f8f9fa;
 }
 
-/* ========== WELCOME PAGE STYLES ========== */
-WelcomePage {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 #F8F9FA, stop:1 #E9ECEF);
-}
-
-WelcomePage QLabel#titleLabel {
-    color: #2C3E50;
-    padding: 20px;
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #3498DB, stop:0.5 #9B59B6, stop:1 #E74C3C);
-    border-radius: 15px;
-    border: 3px solid #2C3E50;
-    font-size: 32px;
-    font-weight: bold;
-}
-
-WelcomePage QLabel#gameIcon {
-    color: #E74C3C;
-    padding: 10px;
-    font-size: 72px;
-    font-weight: bold;
-}
-
-WelcomePage QGroupBox#rulesGroup {
-    font-weight: bold;
-    font-size: 16px;
-    border: 2px solid #3498DB;
-    border-radius: 10px;
-    margin-top: 10px;
-    padding-top: 15px;
-    background-color: white;
-}
-
-WelcomePage QGroupBox#rulesGroup::title {
-    subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 10px 0 10px;
-    color: #2C3E50;
-}
-
-WelcomePage QPushButton#startButton {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #27AE60, stop:1 #2ECC71);
-    color: white;
-    border-radius: 15px;
-    border: 3px solid #1E8449;
-    padding: 10px;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-WelcomePage QPushButton#startButton:hover {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #229954, stop:1 #27AE60);
-    border: 3px solid #145A32;
-}
-
-WelcomePage QPushButton#startButton:pressed {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #1E8449, stop:1 #229954);
-}
-
-/* ========== GAME PAGE LIGHT THEME ========== */
-GamePage[theme="light"] {
-    background-color: #F8F9FA;
-}
-
-GamePage[theme="light"] QLabel {
+/* Theme-specific styling */
+QWidget#gamePage[theme="light"] {
+    background-color: #f8f9fa;
     color: #212529;
 }
 
-GamePage[theme="light"] QGroupBox {
-    background-color: white;
-    border: 2px solid #DEE2E6;
-    border-radius: 5px;
-    margin-top: 10px;
+QWidget#gamePage[theme="dark"] {
+    background-color: #212529;
+    color: #f8f9fa;
+}
+
+/* Title label */
+QLabel {
+    font-family: "Arial";
+}
+
+#titleLabel {
+    font-size: 32px;
     font-weight: bold;
-}
-
-GamePage[theme="light"] QGroupBox::title {
-    subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 5px 0 5px;
-    color: #495057;
-}
-
-/* Scoreboard specific for light theme */
-GamePage[theme="light"] QLabel#playerScoreLabel {
-    color: #27AE60;
-    font-size: 16px;
-}
-
-GamePage[theme="light"] QLabel#dealerScoreLabel {
-    color: #E74C3C;
-    font-size: 16px;
-}
-
-GamePage[theme="light"] QLabel#roundsLabel {
-    color: #7F8C8D;
-    font-size: 14px;
-}
-
-/* Group box colors for light theme */
-GamePage[theme="light"] QGroupBox#dealerGroup {
-    border: 2px solid #E74C3C;
-}
-
-GamePage[theme="light"] QGroupBox#playerGroup {
-    border: 2px solid #27AE60;
-}
-
-GamePage[theme="light"] QGroupBox#scoreboardGroup {
-    border: 2px solid #3498DB;
-}
-
-/* Button styles for light theme */
-GamePage[theme="light"] QPushButton#hitButton {
-    background-color: #3498DB;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="light"] QPushButton#hitButton:hover {
-    background-color: #2980B9;
-}
-
-GamePage[theme="light"] QPushButton#hitButton:disabled {
-    background-color: #BDC3C7;
-}
-
-GamePage[theme="light"] QPushButton#standButton {
-    background-color: #E74C3C;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="light"] QPushButton#standButton:hover {
-    background-color: #C0392B;
-}
-
-GamePage[theme="light"] QPushButton#standButton:disabled {
-    background-color: #BDC3C7;
-}
-
-GamePage[theme="light"] QPushButton#newRoundButton {
-    background-color: #27AE60;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="light"] QPushButton#newRoundButton:hover {
-    background-color: #229954;
-}
-
-GamePage[theme="light"] QPushButton#themeButton {
-    background-color: #34495E;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="light"] QPushButton#themeButton:hover {
-    background-color: #2C3E50;
-}
-
-GamePage[theme="light"] QPushButton#themeButton:checked {
-    background-color: #F39C12;
-}
-
-GamePage[theme="light"] QPushButton#backButton {
-    background-color: #95A5A6;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="light"] QPushButton#backButton:hover {
-    background-color: #7F8C8D;
-}
-
-/* ========== GAME PAGE DARK THEME ========== */
-GamePage[theme="dark"] {
-    background-color: #121212;
-}
-
-GamePage[theme="dark"] QLabel {
-    color: #E0E0E0;
-}
-
-GamePage[theme="dark"] QGroupBox {
-    background-color: #1E1E1E;
-    border: 2px solid #424242;
-    border-radius: 5px;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #E0E0E0;
-}
-
-GamePage[theme="dark"] QGroupBox::title {
-    subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 5px 0 5px;
-    color: #BB86FC;
-}
-
-/* Scoreboard specific for dark theme */
-GamePage[theme="dark"] QLabel#playerScoreLabel {
-    color: #4CAF50;
-    font-size: 16px;
-}
-
-GamePage[theme="dark"] QLabel#dealerScoreLabel {
-    color: #F44336;
-    font-size: 16px;
-}
-
-GamePage[theme="dark"] QLabel#roundsLabel {
-    color: #9E9E9E;
-    font-size: 14px;
-}
-
-/* Group box colors for dark theme */
-GamePage[theme="dark"] QGroupBox#dealerGroup {
-    border: 2px solid #F44336;
-}
-
-GamePage[theme="dark"] QGroupBox#playerGroup {
-    border: 2px solid #4CAF50;
-}
-
-GamePage[theme="dark"] QGroupBox#scoreboardGroup {
-    border: 2px solid #BB86FC;
-}
-
-/* Button styles for dark theme */
-GamePage[theme="dark"] QPushButton#hitButton {
-    background-color: #2196F3;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="dark"] QPushButton#hitButton:hover {
-    background-color: #1976D2;
-}
-/* New Game button styles for light theme */
-GamePage[theme="light"] QPushButton#newGameButton,
-GamePage[theme="light"] QPushButton#newGameButtonSmall {
-    background-color: #9B59B6;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="light"] QPushButton#newGameButton:hover,
-GamePage[theme="light"] QPushButton#newGameButtonSmall:hover {
-    background-color: #8E44AD;
-}
-
-/* New Game button styles for dark theme */
-GamePage[theme="dark"] QPushButton#newGameButton,
-GamePage[theme="dark"] QPushButton#newGameButtonSmall {
-    background-color: #7B1FA2;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="dark"] QPushButton#newGameButton:hover,
-GamePage[theme="dark"] QPushButton#newGameButtonSmall:hover {
-    background-color: #6A1B9A;
-}
-
-/* Differentiate between the two New Game buttons if needed */
-GamePage[theme="light"] QPushButton#newGameButtonSmall {
-    font-size: 14px; /* Slightly larger in controls section */
-}
-
-GamePage[theme="dark"] QPushButton#newGameButtonSmall {
-    font-size: 14px; /* Slightly larger in controls section */
-}
-
-GamePage[theme="dark"] QPushButton#hitButton:disabled {
-    background-color: #757575;
-}
-
-GamePage[theme="dark"] QPushButton#standButton {
-    background-color: #F44336;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="dark"] QPushButton#standButton:hover {
-    background-color: #D32F2F;
-}
-
-GamePage[theme="dark"] QPushButton#standButton:disabled {
-    background-color: #757575;
-}
-
-GamePage[theme="dark"] QPushButton#newRoundButton {
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-GamePage[theme="dark"] QPushButton#newRoundButton:hover {
-    background-color: #388E3C;
-}
-
-GamePage[theme="dark"] QPushButton#themeButton {
-    background-color: #3700B3;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="dark"] QPushButton#themeButton:hover {
-    background-color: #30009C;
-}
-
-GamePage[theme="dark"] QPushButton#themeButton:checked {
-    background-color: #F39C12;
-}
-
-GamePage[theme="dark"] QPushButton#backButton {
-    background-color: #616161;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-GamePage[theme="dark"] QPushButton#backButton:hover {
-    background-color: #424242;
-}
-
-/* ========== CARD WIDGET STYLES ========== */
-CardWidget {
-    border: 2px solid #333;
-    border-radius: 8px;
-    background-color: white;
-    margin: 5px;
-}
-
-/* ========== RESULT LABEL COLORS ========== */
-GamePage QLabel#resultLabel {
-    font-size: 18px;
-    font-weight: bold;
+    color: #2c3e50;
     padding: 10px;
 }
 
-/* Win state colors */
-GamePage[result="win"] QLabel#resultLabel {
-    color: #27AE60; /* Light theme */
+/* Button styling */
+QPushButton {
+    font-family: "Arial";
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 2px solid #3498db;
+    background-color: #3498db;
+    color: white;
+    min-width: 80px;
 }
 
-GamePage[theme="dark"][result="win"] QLabel#resultLabel {
-    color: #4CAF50; /* Dark theme */
+QPushButton:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
 }
 
-/* Lose state colors */
-GamePage[result="lose"] QLabel#resultLabel {
-    color: #E74C3C; /* Light theme */
+QPushButton:pressed {
+    background-color: #1c6ea4;
 }
 
-GamePage[theme="dark"][result="lose"] QLabel#resultLabel {
-    color: #F44336; /* Dark theme */
+/* Special button types */
+#hitButton {
+    background-color: #27ae60;
+    border-color: #27ae60;
 }
 
-/* Push/Tie state colors */
-GamePage[result="push"] QLabel#resultLabel {
-    color: #7F8C8D; /* Light theme */
+#standButton {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
 }
 
-GamePage[theme="dark"][result="push"] QLabel#resultLabel {
-    color: #9E9E9E; /* Dark theme */
+#newRoundButton {
+    background-color: #3498db;
+    border-color: #3498db;
 }
 
-/* Player turn state */
-GamePage[state="player_turn"] QLabel#resultLabel {
-    color: #3498DB; /* Light theme */
+#newGameButton {
+    background-color: #9b59b6;
+    border-color: #9b59b6;
 }
 
-GamePage[theme="dark"][state="player_turn"] QLabel#resultLabel {
-    color: #64B5F6; /* Dark theme */
+#themeButton {
+    background-color: #34495e;
+    border-color: #34495e;
 }
 
-/* Dealer turn state */
-GamePage[state="dealer_turn"] QLabel#resultLabel {
-    color: #E67E22; /* Light theme */
+#backButton {
+    background-color: #7f8c8d;
+    border-color: #7f8c8d;
 }
 
-GamePage[theme="dark"][state="dealer_turn"] QLabel#resultLabel {
-    color: #FFB74D; /* Dark theme */
+/* Result label styling */
+#resultLabel[result="win"] {
+    color: #27ae60;
+    font-weight: bold;
 }
 
+#resultLabel[result="lose"] {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+#resultLabel[result="push"] {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+/* Group boxes */
+QGroupBox {
+    font-family: "Arial";
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    background-color: white;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 8px;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+}
+
+/* Card widget */
+#cardWidget {
+    border-radius: 8px;
+    background-color: white;
+}
+
+/* Status bar */
+QStatusBar {
+    background-color: #2c3e50;
+    color: white;
+    font-family: "Arial";
+    font-size: 12px;
+}
+
+/* Welcome page specific */
+#gameIcon {
+    color: #3498db;
+}
+
+#rulesGroup {
+    background-color: white;
+}
+
+#startButton {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #3498db, stop: 1 #2980b9);
+    border: 2px solid #2980b9;
+    font-size: 20px;
+    min-height: 70px;
+    min-width: 300px;
+}
