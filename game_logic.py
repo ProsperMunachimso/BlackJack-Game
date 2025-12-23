@@ -1,10 +1,129 @@
 import random
 
 
+class Card:
+    """Represents a playing card with suit and rank"""
+
+    def __init__(self, suit, rank):
+        self.suit = suit  # 'H', 'D', 'C', 'S'
+        self.rank = rank  # 'A', '2', '3', ..., '10', 'J', 'Q', 'K'
+
+        # Define suit symbols and colors
+        self.suit_symbols = {
+            'H': '♥',  # Hearts (red)
+            'D': '♦',  # Diamonds (red)
+            'C': '♣',  # Clubs (black)
+            'S': '♠'  # Spades (black)
+        }
+
+    def get_value(self):
+        """Get the numerical value of the card"""
+        if self.rank in ['J', 'Q', 'K']:
+            return 10
+        elif self.rank == 'A':
+            return 11  # Default to 11, will be adjusted in hand calculation
+        else:
+            return int(self.rank)
+
+    def get_display_text(self):
+        """Get the text representation of the card"""
+        return f"{self.rank}{self.suit_symbols[self.suit]}"
+
+
+class Deck:
+    """Represents a standard 52-card deck"""
+
+    def __init__(self):
+        self.cards = []
+        self.reset()
+
+    def reset(self):
+        """Reset and shuffle the deck"""
+        suits = ['H', 'D', 'C', 'S']
+        ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+        self.cards = [Card(suit, rank) for suit in suits for rank in ranks]
+        self.shuffle()
+
+    def shuffle(self):
+        """Shuffle the deck"""
+        random.shuffle(self.cards)
+
+    def draw(self):
+        """Draw a card from the deck"""
+        if len(self.cards) == 0:
+            self.reset()
+        return self.cards.pop()
+
+
+class Hand:
+    """Represents a player's hand"""
+
+    def __init__(self):
+        self.cards = []
+        self.is_dealer = False
+        self.face_down_card = None  # For dealer's hidden card
+
+    def add_card(self, card, face_up=True):
+        """Add a card to the hand"""
+        if not face_up and self.is_dealer:
+            self.face_down_card = card
+        else:
+            self.cards.append(card)
+
+    def reveal_hidden_card(self):
+        """Reveal the hidden card (for dealer)"""
+        if self.face_down_card:
+            self.cards.append(self.face_down_card)
+            self.face_down_card = None
+
+    def calculate_value(self):
+        """Calculate the hand value with optimal ace handling"""
+        total = 0
+        aces = 0
+
+        # Count all cards (excluding hidden dealer card)
+        for card in self.cards:
+            value = card.get_value()
+            if card.rank == 'A':
+                aces += 1
+            total += value
+
+        # Adjust for aces if needed
+        while total > 21 and aces > 0:
+            total -= 10  # Change Ace from 11 to 1
+            aces -= 1
+
+        return total
+
+    def is_bust(self):
+        """Check if hand is bust"""
+        return self.calculate_value() > 21
+
+    def has_blackjack(self):
+        """Check if hand is a natural blackjack (21 with 2 cards)"""
+        return (len(self.cards) == 2 and
+                self.calculate_value() == 21 and
+                ('A' in [card.rank for card in self.cards]))
+
+    def clear(self):
+        """Clear the hand"""
+        self.cards = []
+        self.face_down_card = None
+
+    def get_card_count(self):
+        """Get total number of cards (including hidden)"""
+        return len(self.cards) + (1 if self.face_down_card else 0)
+
+
 class Game21:
     def __init__(self):
         # Start immediately with a fresh round
         self.new_round()
+
+        # Game statistics
+        self.player_wins = 0
+        self.dealer_wins = 0
+        self.rounds_played = 0
 
     # ROUND MANAGEMENT
 
@@ -17,32 +136,44 @@ class Game21:
         - Empty both hands
         - Reset whether the dealer's hidden card has been revealed
         """
-        self.deck = self.create_deck()
-        random.shuffle(self.deck)
+        self.deck = Deck()
+        self.player_hand = Hand()
+        self.dealer_hand = Hand()
+        self.dealer_hand.is_dealer = True
 
-        # Instead of removing cards from the deck,
-        # we keep an index of the "next card" to deal.
-        self.deck_position = 0
-
-        # Hands start empty; cards will be dealt after UI calls deal_initial_cards()
-        self.player_hand = []
-        self.dealer_hand = []
-
-        # The first dealer card starts hidden until Stand is pressed
+        # Game state tracking
+        self.game_state = "idle"  # idle, player_turn, dealer_turn, finished
+        self.result = None  # win, lose, push
         self.dealer_hidden_revealed = False
-
-        # Track round state
-        self.round_over = False
-        self.player_bust = False
-        self.dealer_bust = False
-        self.result_message = ""
 
     def deal_initial_cards(self):
         """
         Deal two cards each to player and dealer.
         """
-        self.player_hand = [self.draw_card(), self.draw_card()]
-        self.dealer_hand = [self.draw_card(), self.draw_card()]
+        # Reset deck if less than 20 cards
+        if len(self.deck.cards) < 20:
+            self.deck.reset()
+
+        # Deal initial cards
+        self.player_hand.add_card(self.deck.draw())
+        self.dealer_hand.add_card(self.deck.draw())
+        self.player_hand.add_card(self.deck.draw())
+        self.dealer_hand.add_card(self.deck.draw(), face_up=False)
+
+        # Check for player blackjack
+        if self.player_hand.has_blackjack():
+            self.game_state = "finished"
+            self.dealer_hand.reveal_hidden_card()
+            # Check if dealer also has blackjack
+            if self.dealer_hand.has_blackjack():
+                self.result = "push"
+            else:
+                self.result = "win"
+                self.player_wins += 1
+            self.rounds_played += 1
+        else:
+            self.game_state = "player_turn"
+            self.result = None
 
     # DECK AND CARD DRAWING
 
@@ -61,10 +192,9 @@ class Game21:
     def draw_card(self):
         """
         Return the next card in the shuffled deck.
+        Note: Using our Card class instead of string representation
         """
-        card = self.deck[self.deck_position]
-        self.deck_position += 1
-        return card
+        return self.deck.draw()
 
     # HAND VALUES + ACE HANDLING
 
@@ -77,107 +207,131 @@ class Game21:
         - J, Q, K = 10
         - A is normally 11, may later count as 1 if needed
         """
-        rank = card[:-1]  # everything except the suit symbol
-
-        if rank in ["J", "Q", "K"]:
-            return 10
-
-        if rank == "A":
-            return 11  # Initially treat Ace as 11
-
-        # Otherwise it's a number from 2 to 10
-        return int(rank)
+        return card.get_value()
 
     def hand_total(self, hand):
         """
         Calculates the best possible total for a hand.
         Aces are counted as 11 unless this would bust the hand,
         in which case they are reduced to 1.
-
-        Suggested Process:
-        1. Count all Aces as 11 initially.
-        2. If total > 21, subtract 10 for each Ace, so it effectively makes them = 1
         """
-        total = 0
-        ace_count = 0
-
-        # First pass: count all cards, treating Aces as 11
-        for card in hand:
-            if card[:-1] == "A":  # Check if card is an Ace
-                ace_count += 1
-            total += self.card_value(card)
-
-        # Adjust for Aces if we're over 21
-        while total > 21 and ace_count > 0:
-            total -= 10  # Change one Ace from 11 to 1
-            ace_count -= 1
-
-        return total
+        return hand.calculate_value()
 
     # PLAYER ACTIONS
 
     def player_hit(self):
-        # TODO: Add one card to the player's hand and return it, so the UI can display the card. Remove pass when complete.
-        card = self.draw_card()
-        self.player_hand.append(card)
+        """
+        Add one card to the player's hand and return it
+        """
+        if self.game_state != "player_turn":
+            return None
 
-        # Check if player busts
-        if self.player_total() > 21:
-            self.player_bust = True
-            self.round_over = True
-            self.result_message = "Player busts. Dealer wins!"
+        card = self.draw_card()
+        self.player_hand.add_card(card)
+
+        if self.player_hand.is_bust():
+            self.game_state = "finished"
+            self.result = "lose"
+            self.dealer_wins += 1
+            self.rounds_played += 1
+            self.dealer_hand.reveal_hidden_card()
 
         return card
 
     def player_total(self):
-        # TODO: Return the player's total. Remove pass when complete.
-        return self.hand_total(self.player_hand)
+        """
+        Return the player's total
+        """
+        return self.player_hand.calculate_value()
 
     # DEALER ACTIONS
 
     def reveal_dealer_card(self):
-        # TODO: Called when the player presses Stand. After this, the UI should show both dealer cards. Remove pass when complete.
+        """
+        Called when the player presses Stand.
+        After this, the UI should show both dealer cards.
+        """
         self.dealer_hidden_revealed = True
+        self.dealer_hand.reveal_hidden_card()
 
     def dealer_total(self):
-        # TODO: Return the dealer's total. Remove pass when complete.
-        return self.hand_total(self.dealer_hand)
+        """
+        Return the dealer's total
+        """
+        return self.dealer_hand.calculate_value()
 
     def play_dealer_turn(self):
-        # TODO: Dealer must hit until their total is 17 or more, then stand.  Remove pass when complete.
-        while self.dealer_total() < 17:
+        """
+        Dealer must hit until their total is 17 or more, then stand.
+        Returns list of cards drawn during dealer's turn.
+        """
+        self.game_state = "dealer_turn"
+        drawn_cards = []
+
+        while self.dealer_hand.calculate_value() < 17:
             card = self.draw_card()
-            self.dealer_hand.append(card)
+            self.dealer_hand.add_card(card)
+            drawn_cards.append(card)
 
-        # Check if dealer busts
-        if self.dealer_total() > 21:
-            self.dealer_bust = True
-            self.result_message = "Dealer busts. Player wins!"
-        else:
-            # Compare totals to determine winner
-            player_total = self.player_total()
-            dealer_total = self.dealer_total()
+        self.game_state = "finished"
+        self.determine_winner()
+        self.rounds_played += 1
 
-            if player_total > dealer_total:
-                self.result_message = "Player wins!"
-            elif dealer_total > player_total:
-                self.result_message = "Dealer wins!"
-            else:
-                self.result_message = "Push (tie)."
-
-        self.round_over = True
+        return drawn_cards
 
     # WINNER DETERMINATION
 
     def decide_winner(self):
-        # TODO: Decide the outcome of the round.
         """
-        Example: return the following text messages:
-        - "Player busts. Dealer wins!"
-        - "Dealer busts. Player wins!"
-        - "Player wins!"
-        - "Dealer wins!"
-        - "Push (tie)."
+        Decide the outcome of the round.
         """
-        # This method is now handled in play_dealer_turn and player_hit
-        return self.result_message
+        self.determine_winner()
+
+        if self.result == "win":
+            self.player_wins += 1
+            return "Player wins!"
+        elif self.result == "lose":
+            self.dealer_wins += 1
+            return "Dealer wins!"
+        elif self.result == "push":
+            return "Push (tie)."
+        else:
+            return "Game in progress"
+
+    def determine_winner(self):
+        """Determine the winner of the round"""
+        if self.game_state != "finished":
+            return
+
+        player_value = self.player_hand.calculate_value()
+        dealer_value = self.dealer_hand.calculate_value()
+
+        if self.player_hand.is_bust():
+            self.result = "lose"
+        elif self.dealer_hand.is_bust():
+            self.result = "win"
+        elif player_value > dealer_value:
+            self.result = "win"
+        elif dealer_value > player_value:
+            self.result = "lose"
+        else:
+            self.result = "push"
+
+    def player_stand(self):
+        """Player ends their turn"""
+        if self.game_state != "player_turn":
+            return
+
+        self.reveal_dealer_card()
+        # Note: play_dealer_turn will be called separately from UI
+
+    def get_statistics(self):
+        """
+        Returns the current game statistics
+        """
+        return {
+            'player_wins': self.player_wins,
+            'dealer_wins': self.dealer_wins,
+            'rounds_played': self.rounds_played,
+            'ties': self.rounds_played - self.player_wins - self.dealer_wins
+        }
