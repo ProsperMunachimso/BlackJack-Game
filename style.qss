@@ -1,75 +1,176 @@
-/* ========== LIGHT THEME ========== */
+/* ========== GLOBAL STYLES ========== */
+QMainWindow {
+    font-family: "Arial";
+}
+
+QMainWindow[theme="light"] {
+    background-color: #f5f7fa;
+}
+
+QMainWindow[theme="dark"] {
+    background-color: #1a1f2b;
+}
+
+/* Apply theme to all QWidgets by default */
 QWidget[theme="light"] {
-    background-color: #f8f9fa;
+    background-color: #f5f7fa;
+    color: #2c3e50;
+    font-family: "Arial";
 }
 
-QWidget[theme="light"] QLabel {
-    color: #212529;
+QWidget[theme="dark"] {
+    background-color: #1a1f2b;
+    color: #ecf0f1;
+    font-family: "Arial";
 }
 
+/* Welcome page specific */
+QWidget[theme="light"] #titleLabel {
+    color: #2c3e50;
+    padding: 20px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #3498db, stop:1 #2980b9);
+    border-radius: 15px;
+    margin: 10px;
+}
+
+QWidget[theme="dark"] #titleLabel {
+    color: #ecf0f1;
+    padding: 20px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #2980b9, stop:1 #1f618d);
+    border-radius: 15px;
+    margin: 10px;
+}
+
+QWidget[theme="light"] #subtitleLabel {
+    color: #7f8c8d;
+}
+
+QWidget[theme="dark"] #subtitleLabel {
+    color: #bdc3c7;
+}
+
+/* Rules text styling */
+QWidget[theme="light"] #objectiveTitle,
+QWidget[theme="light"] #cardValuesTitle,
+QWidget[theme="light"] #gameFlowTitle,
+QWidget[theme="light"] #featuresTitle {
+    font-weight: bold;
+    font-size: 14pt;
+    color: #2c3e50;
+}
+
+QWidget[theme="dark"] #objectiveTitle,
+QWidget[theme="dark"] #cardValuesTitle,
+QWidget[theme="dark"] #gameFlowTitle,
+QWidget[theme="dark"] #featuresTitle {
+    font-weight: bold;
+    font-size: 14pt;
+    color: #ecf0f1;
+}
+
+QWidget[theme="light"] #objectiveContent,
+QWidget[theme="light"] #cardValuesContent,
+QWidget[theme="light"] #gameFlowContent,
+QWidget[theme="light"] #featuresContent {
+    font-size: 13pt;
+    color: #2c3e50;
+}
+
+QWidget[theme="dark"] #objectiveContent,
+QWidget[theme="dark"] #cardValuesContent,
+QWidget[theme="dark"] #gameFlowContent,
+QWidget[theme="dark"] #featuresContent {
+    font-size: 13pt;
+    color: #ecf0f1;
+}
+
+/* Game page title */
+QWidget[theme="light"] #gameTitle {
+    color: #2c3e50;
+}
+
+QWidget[theme="dark"] #gameTitle {
+    color: #ecf0f1;
+}
+
+/* ========== LIGHT THEME GROUPS ========== */
 QWidget[theme="light"] QGroupBox {
-    background-color: white;
-    border: 2px solid #bdc3c7;
+    background-color: #ffffff;
+    border: 2px solid #3498db;
     border-radius: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    color: #212529;
+    margin-top: 15px;
+    padding-top: 12px;
+    color: #2c3e50;
     font-size: 16px;
     font-weight: bold;
+    font-family: "Arial";
 }
 
 QWidget[theme="light"] QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    padding: 0 8px;
-    background-color: #ecf0f1;
+    padding: 4px 12px;
+    background-color: #3498db;
     border-radius: 4px;
-    color: #212529;
+    color: #ffffff;
+    font-weight: bold;
 }
 
 QWidget[theme="light"] #playerGroup {
     border-color: #27ae60;
 }
 
+QWidget[theme="light"] #playerGroup::title {
+    background-color: #27ae60;
+}
+
 QWidget[theme="light"] #dealerGroup {
     border-color: #e74c3c;
 }
 
-/* ========== DARK THEME ========== */
-QWidget[theme="dark"] {
-    background-color: #212529;
+QWidget[theme="light"] #dealerGroup::title {
+    background-color: #e74c3c;
 }
 
-QWidget[theme="dark"] QLabel {
-    color: #f8f9fa;
-}
-
+/* ========== DARK THEME GROUPS ========== */
 QWidget[theme="dark"] QGroupBox {
-    background-color: #343a40;
-    border: 2px solid #495057;
+    background-color: #2c3e50;
+    border: 2px solid #2980b9;
     border-radius: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    color: #f8f9fa;
+    margin-top: 15px;
+    padding-top: 12px;
+    color: #ecf0f1;
     font-size: 16px;
     font-weight: bold;
+    font-family: "Arial";
 }
 
 QWidget[theme="dark"] QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
-    padding: 0 8px;
-    background-color: #495057;
+    padding: 4px 12px;
+    background-color: #2980b9;
     border-radius: 4px;
-    color: #f8f9fa;
+    color: #ffffff;
+    font-weight: bold;
 }
 
 QWidget[theme="dark"] #playerGroup {
-    border-color: #4CAF50;
+    border-color: #27ae60;
+}
+
+QWidget[theme="dark"] #playerGroup::title {
+    background-color: #27ae60;
 }
 
 QWidget[theme="dark"] #dealerGroup {
-    border-color: #F44336;
+    border-color: #e74c3c;
+}
+
+QWidget[theme="dark"] #dealerGroup::title {
+    background-color: #e74c3c;
 }
 
 /* ========== BUTTONS - LIGHT THEME ========== */
@@ -78,13 +179,27 @@ QWidget[theme="light"] QPushButton {
     color: white;
     border: 2px solid #2980b9;
     border-radius: 6px;
-    padding: 8px 16px;
+    padding: 10px 20px;
     font-weight: bold;
     font-size: 14px;
+    font-family: "Arial";
+    min-height: 40px;
 }
 
 QWidget[theme="light"] QPushButton:hover {
     background-color: #2980b9;
+    border-color: #1f618d;
+}
+
+QWidget[theme="light"] QPushButton:pressed {
+    background-color: #1f618d;
+    border-color: #154360;
+}
+
+QWidget[theme="light"] QPushButton:disabled {
+    background-color: #95a5a6;
+    border-color: #7f8c8d;
+    color: #bdc3c7;
 }
 
 QWidget[theme="light"] #hitButton {
@@ -94,6 +209,7 @@ QWidget[theme="light"] #hitButton {
 
 QWidget[theme="light"] #hitButton:hover {
     background-color: #219653;
+    border-color: #1e8449;
 }
 
 QWidget[theme="light"] #standButton {
@@ -103,6 +219,7 @@ QWidget[theme="light"] #standButton {
 
 QWidget[theme="light"] #standButton:hover {
     background-color: #c0392b;
+    border-color: #a93226;
 }
 
 QWidget[theme="light"] #newRoundButton {
@@ -112,72 +229,96 @@ QWidget[theme="light"] #newRoundButton {
 
 QWidget[theme="light"] #newRoundButton:hover {
     background-color: #2980b9;
+    border-color: #1f618d;
 }
 
 QWidget[theme="light"] #backButton {
     background-color: #7f8c8d;
     border-color: #95a5a6;
+    color: white;
 }
 
 QWidget[theme="light"] #backButton:hover {
     background-color: #95a5a6;
+    border-color: #7f8c8d;
 }
 
 /* ========== BUTTONS - DARK THEME ========== */
 QWidget[theme="dark"] QPushButton {
-    background-color: #495057;
+    background-color: #2980b9;
     color: white;
-    border: 2px solid #6c757d;
+    border: 2px solid #1f618d;
     border-radius: 6px;
-    padding: 8px 16px;
+    padding: 10px 20px;
     font-weight: bold;
     font-size: 14px;
+    font-family: "Arial";
+    min-height: 40px;
 }
 
 QWidget[theme="dark"] QPushButton:hover {
-    background-color: #6c757d;
+    background-color: #1f618d;
+    border-color: #154360;
+}
+
+QWidget[theme="dark"] QPushButton:pressed {
+    background-color: #154360;
+    border-color: #0e2a40;
+}
+
+QWidget[theme="dark"] QPushButton:disabled {
+    background-color: #34495e;
+    border-color: #2c3e50;
+    color: #7f8c8d;
 }
 
 QWidget[theme="dark"] #hitButton {
-    background-color: #2e7d32;
-    border-color: #1b5e20;
+    background-color: #27ae60;
+    border-color: #219653;
 }
 
 QWidget[theme="dark"] #hitButton:hover {
-    background-color: #1b5e20;
+    background-color: #219653;
+    border-color: #1e8449;
 }
 
 QWidget[theme="dark"] #standButton {
-    background-color: #c62828;
-    border-color: #b71c1c;
+    background-color: #e74c3c;
+    border-color: #c0392b;
 }
 
 QWidget[theme="dark"] #standButton:hover {
-    background-color: #b71c1c;
+    background-color: #c0392b;
+    border-color: #a93226;
 }
 
 QWidget[theme="dark"] #newRoundButton {
-    background-color: #1565c0;
-    border-color: #0d47a1;
+    background-color: #2980b9;
+    border-color: #1f618d;
 }
 
 QWidget[theme="dark"] #newRoundButton:hover {
-    background-color: #0d47a1;
+    background-color: #1f618d;
+    border-color: #154360;
 }
 
 QWidget[theme="dark"] #backButton {
     background-color: #546e7a;
     border-color: #455a64;
+    color: white;
 }
 
 QWidget[theme="dark"] #backButton:hover {
     background-color: #455a64;
+    border-color: #37474f;
 }
 
 /* ========== THEME BUTTON ========== */
 #themeButton {
     font-weight: bold;
     font-size: 14px;
+    font-family: "Arial";
+    padding: 8px 16px;
 }
 
 QWidget[theme="light"] #themeButton {
@@ -188,75 +329,181 @@ QWidget[theme="light"] #themeButton {
 
 QWidget[theme="light"] #themeButton:hover {
     background-color: #2c3e50;
+    border-color: #1a252f;
 }
 
 QWidget[theme="dark"] #themeButton {
     background-color: #f39c12;
     border-color: #e67e22;
-    color: #212529;
+    color: #2c3e50;
 }
 
 QWidget[theme="dark"] #themeButton:hover {
     background-color: #e67e22;
+    border-color: #d35400;
 }
 
 /* ========== RESULT LABEL ========== */
 #resultLabel {
     font-weight: bold;
-    padding: 10px;
+    font-size: 18px;
+    padding: 15px;
+    font-family: "Arial";
+    border-radius: 6px;
+    margin: 10px 0;
+}
+
+QWidget[theme="light"] #resultLabel {
+    background-color: #ecf0f1;
+    color: #2c3e50;
 }
 
 QWidget[theme="light"] #resultLabel[result="win"] {
+    background-color: #d5f4e6;
     color: #27ae60;
+    border: 2px solid #27ae60;
 }
 
 QWidget[theme="light"] #resultLabel[result="lose"] {
+    background-color: #fadbd8;
     color: #e74c3c;
+    border: 2px solid #e74c3c;
 }
 
 QWidget[theme="light"] #resultLabel[result="push"] {
+    background-color: #fef9e7;
     color: #f39c12;
+    border: 2px solid #f39c12;
+}
+
+QWidget[theme="dark"] #resultLabel {
+    background-color: #34495e;
+    color: #ecf0f1;
 }
 
 QWidget[theme="dark"] #resultLabel[result="win"] {
-    color: #4CAF50;
+    background-color: #1e3c2b;
+    color: #27ae60;
+    border: 2px solid #27ae60;
 }
 
 QWidget[theme="dark"] #resultLabel[result="lose"] {
-    color: #F44336;
+    background-color: #3c1f1d;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
 }
 
 QWidget[theme="dark"] #resultLabel[result="push"] {
-    color: #FFB74D;
+    background-color: #3c2f1f;
+    color: #f39c12;
+    border: 2px solid #f39c12;
 }
 
 /* ========== CARD WIDGET ========== */
 #cardWidget {
     border-radius: 8px;
+    margin: 5px;
 }
 
 QWidget[theme="light"] #cardWidget {
-    background-color: white;
-    border: 1px solid #bdc3c7;
+    background-color: #ffffff;
+    border: 2px solid #bdc3c7;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
 
 QWidget[theme="dark"] #cardWidget {
-    background-color: #495057;
-    border: 1px solid #6c757d;
+    background-color: #2c3e50;
+    border: 2px solid #34495e;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
 
 /* ========== STATUS BAR ========== */
 QStatusBar {
     font-size: 12px;
     padding: 5px;
+    font-family: "Arial";
 }
 
 QWidget[theme="light"] QStatusBar {
-    background-color: #ecf0f1;
-    color: #2c3e50;
+    background-color: #3498db;
+    color: #ffffff;
+    border-top: 1px solid #2980b9;
 }
 
 QWidget[theme="dark"] QStatusBar {
-    background-color: #343a40;
-    color: #f8f9fa;
+    background-color: #2980b9;
+    color: #ecf0f1;
+    border-top: 1px solid #1f618d;
+}
+
+/* ========== START BUTTON ========== */
+#startButton {
+    background-color: #27ae60;
+    color: white;
+    border: 2px solid #219653;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Arial";
+    min-width: 300px;
+    min-height: 70px;
+}
+
+#startButton:hover {
+    background-color: #219653;
+    border-color: #1e8449;
+}
+
+#startButton:pressed {
+    background-color: #1e8449;
+    border-color: #186a3b;
+}
+
+/* ========== TOTAL LABELS ========== */
+#playerTotalLabel, #dealerTotalLabel {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+QWidget[theme="light"] #playerTotalLabel {
+    background-color: #d5f4e6;
+    color: #27ae60;
+    border: 1px solid #27ae60;
+}
+
+QWidget[theme="light"] #dealerTotalLabel {
+    background-color: #fadbd8;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+QWidget[theme="dark"] #playerTotalLabel {
+    background-color: #1e3c2b;
+    color: #27ae60;
+    border: 1px solid #27ae60;
+}
+
+QWidget[theme="dark"] #dealerTotalLabel {
+    background-color: #3c1f1d;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+/* ========== CONTROLS CONTAINER ========== */
+#controls {
+    padding: 20px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+QWidget[theme="light"] #controls {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+QWidget[theme="dark"] #controls {
+    background-color: rgba(41, 128, 185, 0.2);
 }

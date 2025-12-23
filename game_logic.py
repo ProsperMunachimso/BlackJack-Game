@@ -1,6 +1,4 @@
 import random
-
-
 class Card:
     """Represents a playing card with suit and rank"""
 
@@ -8,7 +6,8 @@ class Card:
         self.suit = suit  # 'H', 'D', 'C', 'S'
         self.rank = rank  # 'A', '2', '3', ..., '10', 'J', 'Q', 'K'
 
-        # Define suit symbols and colors
+        # This defines suit symbols using Unicode characters
+        # We used Unicode because it provides proper suit symbols that work across all platforms
         self.suit_symbols = {
             'H': '♥',  # Hearts (red)
             'D': '♦',  # Diamonds (red)
@@ -17,101 +16,137 @@ class Card:
         }
 
     def get_value(self):
-        """Get the numerical value of the card"""
+        """Get the numerical value of the card. We wrote this method to calculate card values for the game."""
+        # This checks if the card is a face card (Jack, Queen, King)
         if self.rank in ['J', 'Q', 'K']:
+            # This returns 10 for face cards
             return 10
+        # This checks if the card is an Ace
         elif self.rank == 'A':
-            return 11  # Default to 11, will be adjusted in hand calculation
+            # This returns 11 for Aces by default, we adjusted this later in the code.
+            return 11
         else:
+            # This converts number cards to integers
             return int(self.rank)
 
     def get_display_text(self):
-        """Get the text representation of the card"""
+        """Get the text representation of the card. We wrote this method for displaying cards in the UI."""
+        # This returns the card rank followed by the suit symbol
         return f"{self.rank}{self.suit_symbols[self.suit]}"
 
 
+
 class Deck:
-    """Represents a standard 52-card deck"""
+    """Represents a standard 52-card deck. We created this class to manage the deck of cards."""
 
     def __init__(self):
         self.cards = []
         self.reset()
 
     def reset(self):
-        """Reset and shuffle the deck"""
+        """Reset and shuffle the deck. We wrote this method to recreate a full deck when needed."""
+        # This defines the four suits
         suits = ['H', 'D', 'C', 'S']
+        # This defines all possible ranks
         ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+        # This creates all 52 cards using list comprehension
         self.cards = [Card(suit, rank) for suit in suits for rank in ranks]
+        # This shuffles the deck
         self.shuffle()
 
     def shuffle(self):
-        """Shuffle the deck"""
+        """Shuffle the deck. We wrote this method to randomize card order."""
+        # This shuffles the cards using Python's random module
         random.shuffle(self.cards)
 
     def draw(self):
-        """Draw a card from the deck"""
+        """Draw a card from the deck. We wrote this method to remove and return the top card."""
+        # This checks if the deck is empty
         if len(self.cards) == 0:
+            # This resets the deck if empty
             self.reset()
+        # This removes and returns the last card from the deck
         return self.cards.pop()
 
-
 class Hand:
-    """Represents a player's hand"""
-
+    """Represents a player's hand. We created this class to manage a collection of cards."""
     def __init__(self):
         self.cards = []
         self.is_dealer = False
         self.face_down_card = None  # For dealer's hidden card
 
     def add_card(self, card, face_up=True):
-        """Add a card to the hand"""
+        """Add a card to the hand. We wrote this method to handle both face-up and face-down cards."""
+        # This checks if the card should be hidden and if this is the dealer's hand
         if not face_up and self.is_dealer:
+            # This stores the card as hidden for dealer
             self.face_down_card = card
         else:
+            # This adds the card normally to the hand
             self.cards.append(card)
 
     def reveal_hidden_card(self):
-        """Reveal the hidden card (for dealer)"""
+        """Reveal the hidden card. We wrote this method for the dealer to show their hidden card."""
+        # This checks if there's a hidden card
         if self.face_down_card:
+            # This adds the hidden card to the visible cards
             self.cards.append(self.face_down_card)
+            # This clears the hidden card reference
             self.face_down_card = None
 
     def calculate_value(self):
-        """Calculate the hand value with optimal ace handling"""
+        """Calculate the hand value. We wrote this method to handle Ace values intelligently."""
+        # This initializes the total value
         total = 0
+        # This counts the number of Aces
         aces = 0
 
-        # Count all cards (excluding hidden dealer card)
+        # This loops through all visible cards
         for card in self.cards:
+            # This gets the card's value
             value = card.get_value()
+            # This checks if the card is an Ace
             if card.rank == 'A':
+                # This increments the Ace count
                 aces += 1
+            # This adds the card value to the total
             total += value
 
-        # Adjust for aces if needed
+        # This adjusts Aces from 11 to 1 if the total is over 21
         while total > 21 and aces > 0:
-            total -= 10  # Change Ace from 11 to 1
+            # This subtracts 10 (changes Ace from 11 to 1)
+            total -= 10
+            # This decreases the Ace count
             aces -= 1
 
+        # This returns the final total
         return total
 
     def is_bust(self):
-        """Check if hand is bust"""
+        """Check if hand is bust. We wrote this method to determine if a hand exceeds 21."""
+        # This checks if the hand value is greater than 21
         return self.calculate_value() > 21
 
+
     def has_blackjack(self):
-        """Check if hand is a natural blackjack (21 with 2 cards)"""
+        """Check if hand is a natural blackjack. We wrote this method to detect instant wins."""
+        # This checks if there are exactly 2 cards with total value 21 and one is an Ace
         return (len(self.cards) == 2 and
                 self.calculate_value() == 21 and
                 ('A' in [card.rank for card in self.cards]))
 
+
     def clear(self):
-        """Clear the hand"""
+        """Clear the hand. We wrote this method to reset the hand for a new round."""
+        # This empties the cards list
         self.cards = []
+        # This clears any hidden card
         self.face_down_card = None
 
+
     def get_card_count(self):
-        """Get total number of cards (including hidden)"""
+        """Get total number of cards. We wrote this method to count all cards including hidden ones."""
+        # This returns the count of visible cards plus hidden card if present
         return len(self.cards) + (1 if self.face_down_card else 0)
 
 
