@@ -4,70 +4,67 @@ from PyQt6.QtGui import *
 
 
 class WelcomePage(QWidget):
-    """Welcome page with game introduction and start button"""
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.init_ui()
 
-    def init_ui(self):
-        """Initialize welcome page UI"""
-        # Main layout
-        main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(30)
+        layout = QVBoxLayout()
+        layout.setSpacing(30)
+        layout.setContentsMargins(50, 50, 50, 50)
 
-        # Title with animation effect
-        title_label = QLabel(" Welcome to ZA Great's and Victor's Card Game ")
-        title_label.setObjectName("titleLabel")  # Set object name for QSS
-        title_font = QFont("Arial", 32, QFont.Weight.Bold)
-        title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(title_label)
+        # Title
+        title = QLabel("🎮 21 Card Game")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setFont(QFont("Arial", 36, QFont.Weight.Bold))
+        layout.addWidget(title)
 
-        # Game icon/logo
-        game_icon = QLabel("♠♥♣♦")
-        game_icon.setObjectName("gameIcon")  # Set object name for QSS
-        game_icon.setFont(QFont("Arial", 72, QFont.Weight.Bold))
-        game_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(game_icon)
+        # Subtitle
+        subtitle = QLabel("A classic card game similar to Blackjack")
+        subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        subtitle.setFont(QFont("Arial", 18))
+        layout.addWidget(subtitle)
 
-        # Game rules/instructions
-        rules_group = QGroupBox("Game Rules")
-        rules_group.setObjectName("rulesGroup")  # Set object name for QSS
+        layout.addStretch()
 
+        # Rules
+        rules = QGroupBox("📜 How to Play")
         rules_layout = QVBoxLayout()
-        rules_text = QLabel("""
-        <div style='font-size: 14pt; line-height: 1.6; text-align: left;'>
-        <b>How to Play:</b><br>
-        • Get as close to 21 as possible without going over<br>
-        • Dealer must hit on 16 and stand on 17<br>
-        • Aces count as 1 or 11<br>
-        • Face cards (J, Q, K) are worth 10<br>
-        • Number cards are worth their face value<br><br>
-        <b>Controls:</b><br>
-        • <b>Hit:</b> Take another card<br>
-        • <b>Stand:</b> End your turn<br>
-        • <b>New Round:</b> Start a new game<br>
-        • <b>Theme:</b> Switch between light/dark mode
-        </div>
-        """)
-        rules_text.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        rules_text = QLabel(
+            "<b>Objective:</b> Get as close to 21 as possible without going over.<br><br>"
+            "<b>Card Values:</b><br>"
+            "• Number cards = face value (2-10)<br>"
+            "• Face cards (J, Q, K) = 10<br>"
+            "• Ace = 1 or 11 (whichever is better)<br><br>"
+            "<b>Game Flow:</b><br>"
+            "1. Click 'Start Game' to begin<br>"
+            "2. Click 'New Round' to deal cards<br>"
+            "3. Choose 'Hit' to draw a card<br>"
+            "4. Choose 'Stand' to end your turn<br>"
+            "5. Dealer reveals cards and plays automatically<br>"
+            "6. Winner is determined"
+        )
+        rules_text.setWordWrap(True)
         rules_layout.addWidget(rules_text)
-        rules_group.setLayout(rules_layout)
+        rules.setLayout(rules_layout)
+        layout.addWidget(rules)
 
-        main_layout.addWidget(rules_group)
+        layout.addStretch()
 
-        # Start game button
-        self.start_button = QPushButton(" START GAME ")
-        self.start_button.setObjectName("startButton")  # Set object name for QSS
-        self.start_button.setFont(QFont("Arial", 20, QFont.Weight.Bold))
-        self.start_button.setFixedSize(300, 70)
-        self.start_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.start_button.clicked.connect(self.start_game)
-        main_layout.addWidget(self.start_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        # Start button
+        start_btn = QPushButton("🚀 Start Game")
+        start_btn.setFont(QFont("Arial", 20, QFont.Weight.Bold))
+        start_btn.setFixedSize(300, 70)
+        start_btn.clicked.connect(self.start_game)
+        layout.addWidget(start_btn, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Footer
+        footer = QLabel("© 2024 21 Card Game - HGP Assignment")
+        footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        footer.setFont(QFont("Arial", 10))
+        layout.addWidget(footer)
+
+        self.setLayout(layout)
 
     def start_game(self):
-        """Switch to game page"""
         if self.parent:
             self.parent.show_game_page()

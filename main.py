@@ -13,15 +13,16 @@ from game_page import GamePage
 def load_stylesheet(filename):
     """Load and return the QSS stylesheet from file"""
     try:
-        # Check if file exists
         if not os.path.exists(filename):
-            print(f"Warning: Stylesheet file '{filename}' not found.")
+            print(f"❌ ERROR: Stylesheet file '{filename}' not found!")
             return ""
 
         with open(filename, 'r', encoding='utf-8') as f:
-            return f.read()
+            content = f.read()
+            print(f"✅ Successfully loaded '{filename}' ({len(content)} chars)")
+            return content
     except Exception as e:
-        print(f"Error loading stylesheet: {e}")
+        print(f"❌ ERROR loading stylesheet: {e}")
         return ""
 
 
@@ -30,7 +31,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.stylesheet = load_stylesheet("style.qss")
+        print("🚀 MainWindow initializing...")
         self.init_ui()
 
     def init_ui(self):
@@ -55,18 +56,13 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage("Welcome to 21 Card Game! Click 'Start Game' to begin.")
 
-        # Apply stylesheet
-        self.setStyleSheet(self.stylesheet)
-
-        # Apply light theme by default to game page
-        self.game_page.set_theme("light")
-
         # Show welcome page initially
         self.stacked_widget.setCurrentWidget(self.welcome_page)
 
+        print("✅ MainWindow initialization complete")
+
     def show_game_page(self):
         """Switch to game page and reset game"""
-        # Reset the game to ensure fresh start
         self.game_page.game.reset_game()
         self.stacked_widget.setCurrentWidget(self.game_page)
         self.status_bar.showMessage("New game started! Click 'New Round' to begin playing.")
@@ -77,31 +73,36 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setCurrentWidget(self.welcome_page)
         self.status_bar.showMessage("Welcome to 21 Card Game! Click 'Start Game' to begin.")
 
-    def resizeEvent(self, event):
-        """Handle window resize for responsiveness"""
-        super().resizeEvent(event)
-        self.status_bar.showMessage(f"Window size: {self.width()}x{self.height()}")
-
 
 def main():
     """Main application entry point"""
     app = QApplication(sys.argv)
 
-    # Set application style for better contrast
+    print("=" * 50)
+    print("🚀 STARTING 21 CARD GAME")
+    print("=" * 50)
+
+    # Set application style
     app.setStyle("Fusion")
 
-    # Load global stylesheet
-    global_stylesheet = load_stylesheet("style.qss")
-    if global_stylesheet:
-        app.setStyleSheet(global_stylesheet)
+    # Load and apply global stylesheet
+    stylesheet = load_stylesheet("style.qss")
+    if stylesheet:
+        app.setStyleSheet(stylesheet)
+        print("✅ Global stylesheet applied")
+    else:
+        print("⚠️ No stylesheet applied - using default styling")
 
-    # Set application font for better readability
+    # Set application font
     font = QFont("Arial", 10)
     app.setFont(font)
 
     # Create and show main window
     window = MainWindow()
     window.show()
+
+    print("✅ Application running")
+    print("=" * 50)
 
     sys.exit(app.exec())
 
