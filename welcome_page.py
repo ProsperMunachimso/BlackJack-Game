@@ -4,7 +4,7 @@ from PyQt6.QtGui import *
 
 
 class WelcomePage(QWidget):
-    """Welcome page with game introduction and start button"""
+    """Welcome page with game introduction and start button. We created this class to display the welcome screen."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -13,8 +13,8 @@ class WelcomePage(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        """Initialize welcome page UI"""
-        # Set object name for styling
+        """Initialize welcome page UI. We wrote this method to set up all the visual elements on the welcome screen."""
+        # This sets the object name for styling
         self.setObjectName("welcomePage")
 
         # Main layout
@@ -22,23 +22,28 @@ class WelcomePage(QWidget):
         main_layout.setSpacing(25)
         main_layout.setContentsMargins(30, 30, 30, 30)
 
-        # Title with theme-aware styling
-        self.title_label = QLabel("Welcome to ZA Great's and Victor's Card Game")
+        # The block of code below handles the title with theme-aware styling
+        self.title_label = QLabel("Welcome to ZA Great's and Victor's Card Game") # This creates the title label
         self.title_label.setObjectName("titleLabel")
         title_font = QFont("Arial", 36, QFont.Weight.Bold)
         self.title_label.setFont(title_font)
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(self.title_label)
 
-        # Card symbols with theme-aware styling
+        #  The block of code below handles the Card symbols with theme-aware styling
+        # This creates a widget to hold card symbols
         card_symbols_widget = QWidget()
+        # This creates a horizontal layout for the card symbols
         card_layout = QHBoxLayout(card_symbols_widget)
+        # This sets spacing between card symbols
         card_layout.setSpacing(20)
 
+        # This creates a list to store card symbol labels
         self.card_symbols = []
+        # This defines the four card suits using Unicode symbols
         suits = ['♠', '♥', '♦', '♣']
 
-        for i, suit in enumerate(suits):
+        for i, suit in enumerate(suits): # This loops through each suit to create a symbol label
             symbol_label = QLabel(suit)
             symbol_label.setObjectName(f"cardSymbol{i}")
             symbol_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -55,19 +60,19 @@ class WelcomePage(QWidget):
         self.rules_group = QGroupBox("Game Rules & Instructions")
         self.rules_group.setObjectName("rulesGroup")
 
-        # Create a scroll area for the rules with visible scrollbar
+        # This creates a scroll area for the rules with visible scrollbar
         self.rules_scroll = QScrollArea()
         self.rules_scroll.setWidgetResizable(True)
         self.rules_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.rules_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
-        # Create the rules content widget
+        # This creates the rules content widget
         self.rules_content = QWidget()
         self.rules_layout = QVBoxLayout(self.rules_content)
         self.rules_layout.setSpacing(15)
         self.rules_layout.setContentsMargins(20, 20, 25, 20)
 
-        # Create labels for each section of the rules
+        # This creates labels for each section of the rules
         # Objective section
         self.objective_title = QLabel("Objective:")
         self.objective_title.setObjectName("objectiveTitle")
@@ -231,10 +236,11 @@ class WelcomePage(QWidget):
             {scrollbar_style}
         """)
 
-        # Force stylesheet reapplication
+        # This forces stylesheet reapplication on the welcome page
         self.style().unpolish(self)
         self.style().polish(self)
 
+        # This forces stylesheet reapplication on all child widgets
         for child in self.findChildren(QWidget):
             if child != self:
                 child.style().unpolish(child)

@@ -157,88 +157,81 @@ class Game21:
         # Start immediately with a fresh round
         self.new_round()
 
-        # Game statistics - commented out for assignment compliance
-        # The assignment requires only single self-contained rounds
-        # These lines are kept for future use if needed
+        # Our initialcode had a statistics section but after Vitor pointed out the assignment is just a single round assignment.
+        # We commented it for future purposes.
         # self.player_wins = 0
         # self.dealer_wins = 0
         # self.rounds_played = 0
 
-    # ROUND MANAGEMENT
-
     def new_round(self):
-        """
-        Prepares for a new self-contained round
-        - Create and shuffle a new deck
-        - Reset both hands
-        - Reset game state
-        """
+        """ Prepares for a new round. We wrote this method to reset everything for a fresh game."""
+        # This creates a new deck
         self.deck = Deck()
+        # This creates a player hand
         self.player_hand = Hand()
+        # This creates a dealer hand
         self.dealer_hand = Hand()
+        # This marks the dealer hand as dealer
         self.dealer_hand.is_dealer = True
 
-        # Game state tracking - reset for each round
-        self.game_state = "idle"  # idle, player_turn, dealer_turn, finished
-        self.result = None  # win, lose, push
+        # This sets the initial game state
+        self.game_state = "idle"
+        # This clears any previous result
+        self.result = None
+        # This tracks if dealer's hidden card is revealed
         self.dealer_hidden_revealed = False
 
     def reset_game(self):
-        """
-        Reset the entire game - starts a fresh round
-        (For assignment compliance, this just starts a new round since no persistent scores)
-        """
+        """ Reset the entire game. We wrote this method to completely restart the game."""
         # For future use if statistics tracking is implemented
         # self.player_wins = 0
         # self.dealer_wins = 0
         # self.rounds_played = 0
-
+        # This calls new_round to reset everything
         self.new_round()
 
     def deal_initial_cards(self):
-        """
-        Deal two cards each to player and dealer.
-        """
-        # Reset deck if less than 20 cards
+        """ Deal initial cards. We wrote this method to start a round with 2 cards each. """
+        # This resets the deck if it's running low
         if len(self.deck.cards) < 20:
             self.deck.reset()
 
-        # Deal initial cards
+        # This deals the first card to player
         self.player_hand.add_card(self.deck.draw())
+        # This deals the first card to dealer (face up)
         self.dealer_hand.add_card(self.deck.draw())
+        # This deals the second card to player
         self.player_hand.add_card(self.deck.draw())
+        # This deals the second card to dealer (face down)
         self.dealer_hand.add_card(self.deck.draw(), face_up=False)
 
-        # Check for player blackjack
+        # This checks if player has blackjack
         if self.player_hand.has_blackjack():
+            # This sets game state to finished
             self.game_state = "finished"
+            # This reveals dealer's hidden card
             self.dealer_hand.reveal_hidden_card()
-            # Check if dealer also has blackjack
+            # This checks if dealer also has blackjack
             if self.dealer_hand.has_blackjack():
+                # This sets result to push (tie)
                 self.result = "push"
             else:
+                # This sets result to win for player
                 self.result = "win"
-                # Commented out for assignment compliance - no persistent statistics
+                # Commented out for future purposes.
                 # self.player_wins += 1
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.rounds_played += 1
         else:
             self.game_state = "player_turn"
             self.result = None
 
-    # DECK AND CARD DRAWING
-
     def draw_card(self):
         """Return the next card in the shuffled deck"""
         return self.deck.draw()
 
-    # HAND VALUES + ACE HANDLING
-
     def card_value(self, card):
-        """
-        Convert a card string into its numeric value.
-
-        Rules:
+        """ Convert a card string into its numeric value.
         - Number cards = their number (2–10)
         - J, Q, K = 10
         - A is normally 11, may later count as 1 if needed
@@ -246,14 +239,13 @@ class Game21:
         return card.get_value()
 
     def hand_total(self, hand):
-        """
-        Calculates the best possible total for a hand.
+        """ Calculates the best possible total for a hand.
         Aces are counted as 11 unless this would bust the hand,
         in which case they are reduced to 1.
         """
         return hand.calculate_value()
 
-    # PLAYER ACTIONS
+    # The blocks of code below handles the player actions(Hitting, Standing).
 
     def player_hit(self):
         """
@@ -268,7 +260,7 @@ class Game21:
         if self.player_hand.is_bust():
             self.game_state = "finished"
             self.result = "lose"
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.dealer_wins += 1
             # self.rounds_played += 1
             self.dealer_hand.reveal_hidden_card()
@@ -281,8 +273,7 @@ class Game21:
         """
         return self.player_hand.calculate_value()
 
-    # DEALER ACTIONS
-
+    # THe block of code below handles the dealers actions.
     def reveal_dealer_card(self):
         """
         Called when the player presses Stand.
@@ -312,12 +303,10 @@ class Game21:
 
         self.game_state = "finished"
         self.determine_winner()
-        # Commented out for assignment compliance - no persistent statistics
+        # Commented out for future purposes.
         # self.rounds_played += 1
 
         return drawn_cards
-
-    # WINNER DETERMINATION
 
     def decide_winner(self):
         """
@@ -326,11 +315,11 @@ class Game21:
         self.determine_winner()
 
         if self.result == "win":
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.player_wins += 1
             return "Player wins!"
         elif self.result == "lose":
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.dealer_wins += 1
             return "Dealer wins!"
         elif self.result == "push":
@@ -348,19 +337,19 @@ class Game21:
 
         if self.player_hand.is_bust():
             self.result = "lose"
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.dealer_wins += 1
         elif self.dealer_hand.is_bust():
             self.result = "win"
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.player_wins += 1
         elif player_value > dealer_value:
             self.result = "win"
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.player_wins += 1
         elif dealer_value > player_value:
             self.result = "lose"
-            # Commented out for assignment compliance - no persistent statistics
+            # Commented out for future purposes.
             # self.dealer_wins += 1
         else:
             self.result = "push"
@@ -371,9 +360,9 @@ class Game21:
             return
 
         self.reveal_dealer_card()
-        # Note: play_dealer_turn will be called separately from UI
+        # play_dealer_turn will be called separately from UI
 
-    # Commented out for assignment compliance - no persistent statistics needed
+    # Commented out for future purposes if statistics is needed.
     # def get_statistics(self):
     #     """
     #     Returns the current game statistics
